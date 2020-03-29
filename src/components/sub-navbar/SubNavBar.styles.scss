@@ -1,0 +1,19 @@
+.collectionPage-nav {
+  width: 20%;
+  z-index: 1;
+
+  font-weight: bold;
+  color: black;
+}
+
+.collectionPage-nav a {
+  color: inherit;
+}
+
+.navbar-toggler:hover .navbar-collapse {
+  display: block !important;
+}
+
+.dropdown:hover .dropdown-menu {
+  display: block !important;
+}
