@@ -17,7 +17,7 @@ class HomePage extends React.Component {
   }
 
   componentDidMount() {
-    fetch('http://localhost:3000/categories/all_categories').then(response => {
+    fetch('http://localhost:3000/categories/all_categories.json').then(response => {
       return response.json();
     }).then(json => {
       this.setState({categories: json});
