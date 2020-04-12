@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from "react-router-dom";
 
+import {getCategories} from '../../api/categories';
 import './HomePage.styles.scss';
 import Header from '../../components/header/Header';
 
@@ -16,14 +17,20 @@ class HomePage extends React.Component {
     }
   }
 
-  componentDidMount() {
-    fetch('http://localhost:3000/categories/all_categories.json').then(response => {
-      return response.json();
-    }).then(json => {
-      this.setState({categories: json});
-      return json;
-    }).then(json => console.log(this.state.categories))
-    .catch(error => console.log(error))
+  async componentDidMount() {
+    const categories = await getCategories().catch(error => {
+                          console.log('There has been a problem with your *getCategories request: ' + error.message);
+                        });
+    this.setState({ categories: categories });
+
+    // getCategories().then(response => {
+    //   console.log(response);
+    //   this.setState({categories: response.data});
+    //   return response.data;
+    // }).then(categories => {
+    //   console.log(categories);
+    //   console.log(this.state.categories)
+    // }).catch(error => console.log(error));
   }
 
   renderCategories = () => {
@@ -49,7 +56,7 @@ class HomePage extends React.Component {
 
             <div class="collapse navbar-collapse" id="navbarNav">
               <ul class="navbar-nav flex-dir-col">
-                {this.state.categories.length ?
+                {this.state.categories && this.state.categories.length ?
                   this.renderCategories()
                 :
                   null

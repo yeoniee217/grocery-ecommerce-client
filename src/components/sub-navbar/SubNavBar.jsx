@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 import './SubNavBar.styles.scss'
 
-const SubNavBar = ({categories}) => {
+const SubNavBar = ({categories, onCategoryClick}) => {
   const [toggle, setToggle] = useState(
     ''
   );
@@ -26,10 +26,10 @@ const SubNavBar = ({categories}) => {
       <div class={`collapse navbar-collapse ${toggle}`} onMouseLeave={handleMouseLeave} id="navbarNav">
         <ul class="navbar-nav">
           {
-            categories.length ?
+            categories && categories.length ?
             categories.map(category =>
               <li key={category.id}>
-                <Link className="nav-link ml-3" to={`/categories/${category.id}`}>{category.name}</Link>
+                <Link onClick={onCategoryClick} className="nav-link ml-3" to={`/categories/${category.id}`}>{category.name}</Link>
               </li>
             )
             :
