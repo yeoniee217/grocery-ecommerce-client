@@ -11,6 +11,7 @@ import SubNavBar from '../../components/sub-navbar/SubNavBar';
 import CollectionSection from '../../components/collection-section/CollectionSection';
 import SideFilter from '../../components/side-filter/SideFilter';
 
+//Controlled Component
 class CollectionPage extends React.Component {
   constructor(props) {
     super(props);

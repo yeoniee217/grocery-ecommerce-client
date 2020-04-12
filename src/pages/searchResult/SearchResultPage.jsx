@@ -21,8 +21,12 @@ class SearchResultPage extends React.Component {
 
   async componentDidMount() {
     try {
+      // const params2 = new URLSearchParams(this.props.location.search);
+      // console.log('first param', params2.get("category"));
+      // console.log('second param', params2.get("keyword"));
+
       let formData = new FormData();
-      const params = queryString.parse(this.props.location.search);
+      const params = queryString.parse(this.props.location.search);  //more stable solution than params2
       formData.append('category', params["category"]);
       formData.append('keyword', params["keyword"]);
 
