@@ -1,102 +1,110 @@
 import React from 'react';
-import Pagination from 'react-paginating';
+import { Redirect } from 'react-router-dom'
+
+import {getCategories} from '../../api/categories';
+import {getProductsByCategory} from '../../api/products';
 
 import './CollectionPage.styles.scss';
 import Header from '../../components/header/Header';
 import CollectionItem from '../../components/collection-item/CollectionItem';
 import SubNavBar from '../../components/sub-navbar/SubNavBar';
+import CollectionSection from '../../components/collection-section/CollectionSection';
+import SideFilter from '../../components/side-filter/SideFilter';
 
 class CollectionPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       categories: [],
-      products: []
+      products: [],
+      radioBtn: 'all',
+      category: '0',
+      keyword: '',
+      searchFormSubmitted: false,
+      categoryLinkClicked: false,
+      categoryName: ''
     }
   }
 
-  componentDidMount() {
-    const category_id = this.props.match.params.id
+  async componentDidMount() {
+    try {
+      const categoryID = this.props.match.params.id;
+      //for filter, use query parameters(query string) instead of '/new' ? thinkso
+      let filter = (this.state.radioBtn != 'all') ? `/${this.state.radioBtn}` : '';
 
-    fetch('http://localhost:3000/categories/all_categories.json').then(response => {
-      return response.json();
-    }).then(json => {
-      this.setState({categories: json});
-      return json;
-    }).then(json => console.log(this.state.categories))
-    .catch(error => console.log(error));
+      const categories = await getCategories().catch(error => {
+                            console.log('There has been a problem with your *getCategories request: ' + error.message);
+                          });
+      console.log('2',categories);
 
-    this.fetchProducts(category_id);
-  }
+      const products = await getProductsByCategory(categoryID, filter).catch(error => {
+                          console.log('There has been a problem with your *getProductsByCategory request: ' + error.message);
+                        });
 
-  componentDidUpdate(prevProps) {
-    if (this.props.match.params.id !== prevProps.match.params.id) {
-      this.fetchProducts(this.props.match.params.id);
+      this.setState({ categories: categories, products: products, categoryName: products[0].category_name });
+    } catch(error) {
+      console.log(error);
     }
   }
 
-  fetchProducts = (category_id) => {
-    fetch(`http://localhost:3000/products/by_category_id/${category_id}.json`).then(response => {
-      return response.json();
-    }).then(json => {
-      this.setState({products: json});
-      return json;
-    }).then(json => console.log(this.state.products))
-    .catch(error => console.log(error));
+  async componentDidUpdate(prevProps, prevState) {
+    const categoryID = this.props.match.params.id;
+    if (categoryID !== prevProps.match.params.id || this.state.radioBtn !== prevState.radioBtn || this.state.categoryLinkClicked) {
+      try {
+        let filter = (this.state.radioBtn !== 'all') ? `/${this.state.radioBtn}` : '';
+        const products = await getProductsByCategory(categoryID, filter).catch(error => {
+                            console.log('There has been a problem with your *getProductsByCategory request: ' + error.message);
+                          });
+        console.log('produc', products);
+
+        if(categoryID !== prevProps.match.params.id || this.state.categoryLinkClicked) {
+          console.log('1');
+          this.setState({radioBtn: "all"});
+        }
+
+        console.log('2');
+        this.setState({ products: products, categoryLinkClicked: false, categoryName: products.length ? products[0].category_name : prevState.categoryName });
+      } catch(error) {
+        console.log(error);
+      }
+    }
   }
 
-  renderProducts = () => {
-    return (
-      this.state.products.map(product =>
-        <CollectionItem key={product.id} product={product} />
-      ));
+  onChange = event => {
+    this.setState({ [event.target.name]: event.target.value });
+    console.log(event.target.name);
+    console.log(event.target.value);
+  }
+
+  onSubmitSearch = e => {
+    console.log(e);
+    this.setState({searchFormSubmitted: true});
+  }
+
+  onCategoryClick = e => {
+    console.log(this.state);
+    this.setState({ categoryLinkClicked: !this.state.categoryLinkClicked });
   }
 
   render() {
+    console.log('render collectionpage');
+    console.log(this.state);
+    if(this.state.searchFormSubmitted) {
+      return <Redirect to={{pathname: '/search',
+                            search: `?category=${this.state.category}&keyword=${this.state.keyword}`}} />
+    }
+
     return (
-      <div class="">
-        <Header categories={ this.state.categories } />
-        <SubNavBar categories={ this.state.categories } />
+      <div className="">
+        <Header categories={this.state.categories}
+                onChange={this.onChange}
+                onSubmitSearch={this.onSubmitSearch} />
+        <SubNavBar categories={this.state.categories} onCategoryClick={this.onCategoryClick} />
         <div style={{marginLeft:"10%", display:"flex"}}>
-            <div class="card mt-5" style={{height:"fit-content"}}>
-              <article class="card-group-item">
-                <header class="card-header"><h6 class="title">Sub Categories</h6></header>
-                <div class="filter-content">
-                  <div class="list-group list-group-flush">
-                    <a href="#" class="list-group-item">Cras justo odio <span class="float-right badge badge-light round">142</span> </a>
-                    <a href="#" class="list-group-item">Dapibus ac facilisis  <span class="float-right badge badge-light round">3</span>  </a>
-                    <a href="#" class="list-group-item">Morbi leo risus <span class="float-right badge badge-light round">32</span>  </a>
-                    <a href="#" class="list-group-item">Another item <span class="float-right badge badge-light round">12</span>  </a>
-                  </div>
-                </div>
-              </article>
-              <article class="card-group-item">
-                <header class="card-header card-border-top"><h6 class="title">Color check</h6></header>
-                <div class="filter-content">
-                  <div class="card-body">
-                    <label class="btn btn-danger">
-                      <input class="" type="checkbox" name="myradio" value=""/>
-                      <span class="form-check-label">Red</span>
-                    </label>
-                    <label class="btn btn-success">
-                      <input class="" type="checkbox" name="myradio" value=""/>
-                      <span class="form-check-label">Green</span>
-                    </label>
-                    <label class="btn btn-primary">
-                      <input class="" type="checkbox" name="myradio" value=""/>
-                      <span class="form-check-label">Blue</span>
-                    </label>
-                  </div>
-                </div>
-              </article>
-            </div>
-
-            <div class="row" style={{width:"70%"}}>
-              {this.renderProducts()}
-            </div>
-
+          <SideFilter categoryName={this.state.categoryName}  radioBtn={this.state.radioBtn}
+                      onChange={this.onChange} showCategoryName={true}/>
+          <CollectionSection products={this.state.products}/>
         </div>
-
 
       </div>
     );
