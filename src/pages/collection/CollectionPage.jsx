@@ -17,7 +17,7 @@ class CollectionPage extends React.Component {
     this.state = {
       categories: [],
       products: [],
-      radioBtn: 'all',
+      selectedRadioBtn: 'all',
       category: '0',
       keyword: '',
       searchFormSubmitted: false,
@@ -30,7 +30,7 @@ class CollectionPage extends React.Component {
     try {
       const categoryID = this.props.match.params.id;
       //for filter, use query parameters(query string) instead of '/new' ? thinkso
-      let filter = (this.state.radioBtn != 'all') ? `/${this.state.radioBtn}` : '';
+      let filter = (this.state.selectedRadioBtn != 'all') ? `/${this.state.selectedRadioBtn}` : '';
 
       const categories = await getCategories().catch(error => {
                             console.log('There has been a problem with your *getCategories request: ' + error.message);
@@ -49,9 +49,9 @@ class CollectionPage extends React.Component {
 
   async componentDidUpdate(prevProps, prevState) {
     const categoryID = this.props.match.params.id;
-    if (categoryID !== prevProps.match.params.id || this.state.radioBtn !== prevState.radioBtn || this.state.categoryLinkClicked) {
+    if (categoryID !== prevProps.match.params.id || this.state.selectedRadioBtn !== prevState.selectedRadioBtn || this.state.categoryLinkClicked) {
       try {
-        let filter = (this.state.radioBtn !== 'all') ? `/${this.state.radioBtn}` : '';
+        let filter = (this.state.selectedRadioBtn !== 'all') ? `/${this.state.selectedRadioBtn}` : '';
         const products = await getProductsByCategory(categoryID, filter).catch(error => {
                             console.log('There has been a problem with your *getProductsByCategory request: ' + error.message);
                           });
@@ -59,7 +59,7 @@ class CollectionPage extends React.Component {
 
         if(categoryID !== prevProps.match.params.id || this.state.categoryLinkClicked) {
           console.log('1');
-          this.setState({radioBtn: "all"});
+          this.setState({selectedRadioBtn: "all"});
         }
 
         console.log('2');
@@ -101,7 +101,7 @@ class CollectionPage extends React.Component {
                 onSubmitSearch={this.onSubmitSearch} />
         <SubNavBar categories={this.state.categories} onCategoryClick={this.onCategoryClick} />
         <div style={{marginLeft:"10%", display:"flex"}}>
-          <SideFilter categoryName={this.state.categoryName}  radioBtn={this.state.radioBtn}
+          <SideFilter categoryName={this.state.categoryName}  selectedRadioBtn={this.state.selectedRadioBtn}
                       onChange={this.onChange} showCategoryName={true}/>
           <CollectionSection products={this.state.products}/>
         </div>

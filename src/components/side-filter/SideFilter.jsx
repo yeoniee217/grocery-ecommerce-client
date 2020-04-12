@@ -2,7 +2,7 @@ import React from 'react'
 
 import './SideFilter.styles.scss'
 
-const SideFilter = ({categoryName, radioBtn, onChange, showCategoryName}) => {
+const SideFilter = ({categoryName, selectedRadioBtn, onChange, showCategoryName}) => {
   return (
     <div class="card mt-5" style={{height:"fit-content"}}>
       {
@@ -16,29 +16,29 @@ const SideFilter = ({categoryName, radioBtn, onChange, showCategoryName}) => {
         <div class="filter-content">
           <div class="card-body">
             <label class="form-check">
-              <input class="form-check-input" type="radio" checked={radioBtn === 'all'}
-                onChange={onChange} name="radioBtn" value="all"/>
+              <input class="form-check-input" type="radio" checked={selectedRadioBtn === 'all'}
+                onChange={onChange} name="selectedRadioBtn" value="all"/>
               <span class="form-check-label">
                 All
               </span>
             </label>
             <label class="form-check">
-              <input class="form-check-input" type="radio" checked={radioBtn === 'new'}
-                onChange={onChange} name="radioBtn" value="new"/>
+              <input class="form-check-input" type="radio" checked={selectedRadioBtn === 'new'}
+                onChange={onChange} name="selectedRadioBtn" value="new"/>
               <span class="form-check-label">
                 New
               </span>
             </label>
             <label class="form-check">
-              <input class="form-check-input" type="radio" checked={radioBtn === 'onSale'}
-                onChange={onChange}  name="radioBtn" value="onSale"/>
+              <input class="form-check-input" type="radio" checked={selectedRadioBtn === 'onSale'}
+                onChange={onChange}  name="selectedRadioBtn" value="onSale"/>
               <span class="form-check-label">
                 On Sale
               </span>
             </label>
             <label class="form-check">
-              <input class="form-check-input" type="radio" checked={radioBtn === 'recUpdated'}
-                onChange={onChange} name="radioBtn" value="recUpdated"/>
+              <input class="form-check-input" type="radio" checked={selectedRadioBtn === 'recUpdated'}
+                onChange={onChange} name="selectedRadioBtn" value="recUpdated"/>
               <span class="form-check-label">
                 Recently Updated
               </span>
