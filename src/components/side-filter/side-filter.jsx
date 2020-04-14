@@ -1,6 +1,6 @@
 import React from 'react'
 
-import './SideFilter.styles.scss'
+import './side-filter.styles.scss'
 
 const SideFilter = ({categoryName, selectedRadioBtn, onChange, showCategoryName}) => {
   return (

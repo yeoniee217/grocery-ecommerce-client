@@ -1,8 +1,8 @@
 import React from 'react';
 
-import './ItemPage.styles.scss'
-import Header from '../../components/header/Header';
-import SubNavBar from '../../components/sub-navbar/SubNavBar';
+import './item-page.styles.scss'
+import Header from '../../components/header/header';
+import SubNavBar from '../../components/sub-navbar/sub-navbar';
 
 class ItemPage extends React.Component {
   constructor(props) {
@@ -13,6 +13,13 @@ class ItemPage extends React.Component {
       product: null
     }
   }
+
+  // async componentDidMount() {
+  //   const categories = await getCategories().catch(error => {
+  //                         console.log('There has been a problem with your *getCategories request: ' + error.message);
+  //                       });
+  //   this.setState({ categories: categories });
+  // }
 
   componentDidMount() {
     fetch('http://localhost:3000/categories.json').then(response => {

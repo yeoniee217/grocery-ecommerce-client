@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from "react-router-dom";
 
-import './SubNavBar.styles.scss'
+import './sub-navbar.styles.scss'
 
 const SubNavBar = ({categories, onCategoryClick}) => {
   const [toggle, setToggle] = useState(

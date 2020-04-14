@@ -2,8 +2,8 @@ import React from 'react';
 import { Link } from "react-router-dom";
 
 import {getCategories} from '../../api/categories';
-import './HomePage.styles.scss';
-import Header from '../../components/header/Header';
+import './homepage.styles.scss';
+import Header from '../../components/header/header';
 
 import grocery from "../../assets/grocery.jfif";
 import grocery2 from "../../assets/grocery2.jfif";
@@ -18,19 +18,17 @@ class HomePage extends React.Component {
   }
 
   async componentDidMount() {
-    const categories = await getCategories().catch(error => {
-                          console.log('There has been a problem with your *getCategories request: ' + error.message);
+    try {
+      const categories = await getCategories().catch(error => {
+                          console.log("HomePage Compo - componentDidMount - *getCategories", error);
                         });
-    this.setState({ categories: categories });
 
-    // getCategories().then(response => {
-    //   console.log(response);
-    //   this.setState({categories: response.data});
-    //   return response.data;
-    // }).then(categories => {
-    //   console.log(categories);
-    //   console.log(this.state.categories)
-    // }).catch(error => console.log(error));
+      console.log(categories);
+      this.setState({ categories: categories });
+
+    } catch(error) {
+      console.log(error);
+    }
   }
 
   renderCategories = () => {
@@ -44,6 +42,7 @@ class HomePage extends React.Component {
   }
 
   render() {
+    console.log(this.state);
     return (
       <div>
         <Header categories={this.state.categories}/>

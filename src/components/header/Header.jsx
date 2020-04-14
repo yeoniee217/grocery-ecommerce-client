@@ -1,6 +1,6 @@
 import React from 'react';
 
-import './Header.styles.scss';
+import './header.styles.scss';
 
 class Header extends React.Component {
   constructor(props) {
@@ -36,7 +36,7 @@ class Header extends React.Component {
 
           <div className="collapse navbar-collapse mt-2" id="navbarSupportedContent">
             <form onSubmit={this.props.onSubmitSearch} className="form-inline ml-5 mr-5">
-                <select name="category" onChange={this.props.onChange} className="form-control search-bar">
+                <select name="categoryID" onChange={this.props.onChange} className="form-control search-bar">
                   <option value="0">All</option>
                   {this.props.categories && this.props.categories.length ?
                     this.props.categories.map(category => (
@@ -59,10 +59,10 @@ class Header extends React.Component {
 
             <ul className="navbar-nav mt-1 ml-4">
               <li className="nav-item active mr-3">
-                <a className="nav-link" href="/"><i className="fas fa-user green"></i></a>
+                <a className="nav-link" href="/signup"><i className="fas fa-user green"></i></a>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="/">
+                <a className="nav-link" href="/checkout">
                   <i className="fas fa-shopping-cart green"></i>
                   <span class="badge badge-green ml-1">4</span>
                 </a>

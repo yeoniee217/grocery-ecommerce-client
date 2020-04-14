@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 
-import './CollectionSection.styles.scss';
-import CollectionItem from '../../components/collection-item/CollectionItem';
+import './collection-section.styles.scss';
+import CollectionItem from '../collection-item/collection-item';
 
 
 class CollectionSection extends Component {
