@@ -1,17 +1,26 @@
 //Stores API calls for categories resource.
 import axios from 'axios';
 
+//Promise Error Handling Reference
 export const getCategories = async () => {
-  //axios.get returns a Promise?
-  let response = await axios.get("http://localhost:3000/categories.json");
+  //axios.get returns a Promise
+  // return axios.get("http://localhost:3000/categories.json");
+
+  const response = await axios.get("http://localhost:3000/categories.json").catch(error => {
+                      console.log('*getCategories request -', error);
+                      return Promise.reject(error);
+                    });
   return response.data;
-  
+
+  // // diff way(than the above) to handle get request error with promise rejection(Promise.reject())
   // return axios.get("http://localhost:3000/categories.json")
   //         .then(response => {
-  //           console.log(response);
+  //           console.log('The response to *getCategories request', response);
   //           return response.data;
-  //         }).catch(error => {
-  //           console.log('There has been a problem with your *getCategories request: ' + error.message);
+  //         })
+  //         .catch(error => {
+  //           console.log('*getCategories request -', error);
+  //           return Promise.reject(error);
   //         });
 };
 
