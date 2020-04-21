@@ -1,6 +1,9 @@
-//Stores API calls(requests) for products resource.
+//Stores API calls(requests to the server) for products resource.
 import axios from 'axios';
 
+// Errors from API calls(requests) have to be handled here by returning a rejected promise object.
+// so when using Promise.all() in a component file,
+// a single returned promise from Promise.all() will reject the first promise that rejects
 export const getProductsByCategory = async (categoryID, filter) => {
   const response = await axios.get(`http://localhost:3000/categories/${categoryID}/products${filter}.json`).catch(error => {
                     console.log('*getProductsByCategory request -', error);

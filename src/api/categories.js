@@ -1,4 +1,4 @@
-//Stores API calls for categories resource.
+//Stores API calls(requests to the server) for categories resource.
 import axios from 'axios';
 
 //Promise Error Handling Reference
