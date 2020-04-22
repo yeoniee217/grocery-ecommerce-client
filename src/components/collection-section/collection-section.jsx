@@ -12,7 +12,7 @@ class CollectionSection extends Component {
   renderProducts = () => {
     return (
       this.props.products.map(product =>
-        <CollectionItem key={product.id} product={product} />
+        <CollectionItem key={product.id} product={product} handleAddToCart={this.props.handleAddToCart}/>
       ));
   }
 
