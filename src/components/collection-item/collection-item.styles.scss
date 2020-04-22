@@ -2,3 +2,8 @@
   background-color:#4093cd;
   border: none;
 }
+
+.btn:disabled {
+  opacity: 0.53;
+  cursor: context-menu;
+}
