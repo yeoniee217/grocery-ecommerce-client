@@ -1,6 +1,5 @@
 import React from 'react';
 import queryString from 'query-string';
-import { Redirect } from 'react-router-dom'
 
 import {getCategories} from '../../api/categories';
 import { searchProducts } from '../../api/products';
@@ -69,27 +68,31 @@ class SearchResultPage extends React.Component {
     console.log(event.target.value);
   }
 
-  // onSubmitSearch = e => {
-
-  //   console.log(e);
-  //   this.setState({searchFormSubmitted: true});
-  // }
-
   render() {
+    console.log(this.state);
     //to do: fix the side filter for this page!
     return (
       <div>
-        <Header categories={ this.state.categories }
+        {/* <Header categories={ this.state.categories }
                 onChange={this.onChange}
-                onSubmitSearch={this.onSubmitSearch}/>
+                onSubmitSearch={this.onSubmitSearch}/> */}
         <SubNavBar categories={ this.state.categories } />
-        <div style={{marginLeft:"10%", display:"flex"}}>
-          <SideFilter/>
-          <CollectionSection products={this.state.products}/>
+          {
+            this.state.products.length !== 0 ?
+              <div style={{marginLeft:"10%", display:"flex"}}>
+                <SideFilter/>
+                <CollectionSection products={this.state.products}/>
+              </div>
+            :
+              <div class="container">
+                <p class="font-weight-bold" style={{textAlign:"center",fontSize:"2rem",marginTop:"10%"}}>
+                  No results found.
+                </p>
+              </div>
+          }
           {/* <SideFilter radioBtn={this.state.radioBtn}
                       onClickFilter={this.onClickFilter} />
           <CollectionSection products={this.state.products}/> */}
-        </div>
       </div>
     )
   }
