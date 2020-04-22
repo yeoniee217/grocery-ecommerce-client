@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 
 import {getCategories} from '../../api/categories';
 import './homepage.styles.scss';
-import Header from '../../components/header/header';
 
 import grocery from "../../assets/grocery.jfif";
 import grocery2 from "../../assets/grocery2.jfif";
@@ -19,12 +18,19 @@ class HomePage extends React.Component {
 
   async componentDidMount() {
     try {
-      const categories = await getCategories().catch(error => {
-                          console.log("HomePage Compo - componentDidMount - *getCategories", error);
-                        });
+      await getCategories().then(categories => {
+        this.setState({ categories: categories });
+      }).catch(error => {
+        console.log("HomePage Compo - componentDidMount - *getCategories", error);
+      });
 
-      console.log(categories);
-      this.setState({ categories: categories });
+      // diff way - using await expression.
+      // const categories = await getCategories().catch(error => {
+      //                     console.log("HomePage Compo - componentDidMount - *getCategories", error);
+      //                   });
+
+      // console.log(categories);
+      // this.setState({ categories: categories });
 
     } catch(error) {
       console.log(error);
@@ -45,8 +51,7 @@ class HomePage extends React.Component {
     console.log(this.state);
     return (
       <div>
-        <Header categories={this.state.categories}/>
-        <div class="mt-3" style={{position: 'absolute', width: '100%', display: 'flex', marginLeft: '20%'}}>
+        <div style={{position: 'absolute', width: '100%', display: 'flex', marginLeft: '20%'}}>
           <nav class="navbar-expand-lg category-nav">
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
               <i className="fas fa-bars"></i>

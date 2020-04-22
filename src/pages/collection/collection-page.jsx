@@ -1,11 +1,11 @@
 import React from 'react';
-import { Redirect } from 'react-router-dom'
+import { Redirect } from 'react-router-dom';
 
 import {getCategories} from '../../api/categories';
 import {getProductsByCategory} from '../../api/products';
+import {getCartItemsFromLocalStorage, flagProductsInCart} from '../../util/util';
 
 import './collection-page.styles.scss';
-import Header from '../../components/header/header';
 import SubNavBar from '../../components/sub-navbar/sub-navbar';
 import CollectionSection from '../../components/collection-section/collection-section';
 import SideFilter from '../../components/side-filter/side-filter';
@@ -18,11 +18,12 @@ class CollectionPage extends React.Component {
       categories: [],
       products: [],
       selectedRadioBtn: 'all',
-      category: '0',
-      keyword: '',
-      searchFormSubmitted: false,
+      // category: '0',
+      // keyword: '',
+      // searchFormSubmitted: false,
       categoryLinkClicked: false,
-      categoryName: ''
+      categoryName: '',
+      cartItems: []
     }
   }
 
@@ -35,7 +36,7 @@ class CollectionPage extends React.Component {
       const categories = getCategories(); //returns a promise (so categories is a promise obj)**
       console.log('promise 1',categories);
 
-      const products = getProductsByCategory(categoryID, filter);
+      let products = getProductsByCategory(categoryID, filter);
       console.log('promise 2',products);
 
       // diff way(than the below) - using .then() method of the Promise**
@@ -45,9 +46,21 @@ class CollectionPage extends React.Component {
         console.log(products);
         console.log(values);
 
-        let categoryName = values[1] ? values[1][0].category_name : '';
+        let categoryName = values[1] ? values[1][0].category.name : '';
 
-        this.setState({ categories: values[0], products: values[1], categoryName: categoryName });
+        const cartItems = getCartItemsFromLocalStorage();
+        flagProductsInCart(cartItems, values[1]);  //interesting!! dig more**
+        // for (const item of cartItems) {
+        //   console.log(item);
+        //   let product = values[1].find(product => product.id === item.id);
+        //   console.log(product);
+        //   if(product) {
+        //     product.alreadyInCart = true
+        //   }
+        // }
+
+        this.setState({ categories: values[0], products: values[1],
+                        categoryName: categoryName, cartItems: cartItems });
       }).catch(error => {
         console.log("CollectionPage Compo - componentDidMount - Promise.all", error);
       });
@@ -60,7 +73,7 @@ class CollectionPage extends React.Component {
       // console.log(products);
       // console.log(all);
 
-      // let categoryName = all[1] ? all[1][0].category_name : '';
+      // let categoryName = all[1] ? all[1][0].category.name : '';
       // this.setState({ categories: all[0], products: all[1], categoryName: categoryName});
 
     } catch(error) {
@@ -73,7 +86,7 @@ class CollectionPage extends React.Component {
     if (categoryID !== prevProps.match.params.id || this.state.selectedRadioBtn !== prevState.selectedRadioBtn || this.state.categoryLinkClicked) {
       try {
         let filter = (this.state.selectedRadioBtn !== 'all') ? `/${this.state.selectedRadioBtn}` : '';
-        const products = await getProductsByCategory(categoryID, filter).catch(error => {
+        let products = await getProductsByCategory(categoryID, filter).catch(error => {
                             console.log('There has been a problem with your *getProductsByCategory request: ' + error.message);
                           });
         console.log('produc', products);
@@ -84,7 +97,13 @@ class CollectionPage extends React.Component {
         }
 
         console.log('2');
-        this.setState({ products: products, categoryLinkClicked: false, categoryName: products.length ? products[0].category_name : prevState.categoryName });
+        let categoryName = products.length ? products[0].category.name : prevState.categoryName;
+        const cartItems = getCartItemsFromLocalStorage();
+        // console.log(cartItems);
+        console.log('this works?');
+        flagProductsInCart(cartItems, products); //important!!!***
+        this.setState({ products: products, categoryLinkClicked: false,
+                        categoryName: categoryName });
       } catch(error) {
         console.log(error);
       }
@@ -97,34 +116,58 @@ class CollectionPage extends React.Component {
     console.log(event.target.value);
   }
 
-  onSubmitSearch = e => {
-    console.log(e);
-    this.setState({searchFormSubmitted: true});
-  }
+  // onSubmitSearch = e => {
+  //   console.log(e);
+  //   this.setState({searchFormSubmitted: true});
+  // }
 
   onCategoryClick = e => {
     console.log(this.state);
     this.setState({ categoryLinkClicked: !this.state.categoryLinkClicked });
   }
 
+  handleAddToCart = (e, product) => {
+    //localStorage.getItem("cartItems") returns string!
+    console.log(product);
+
+    product.alreadyInCart = true;
+    this.setState(state => {
+      //track cartItems var***!
+      const cartItems = state.cartItems;
+      let productAlreadyInCart = false;
+      cartItems.forEach(item => {
+        if(product.id === item.id) {
+          productAlreadyInCart = true;
+          // quantity.count++;
+        }
+      });
+      if(!productAlreadyInCart) {
+        cartItems.push({ ...product, quantity: 1 }); //push product into the state cartItems array
+      }
+
+      localStorage.setItem("cartItems", JSON.stringify(cartItems));
+      console.log(this.state);
+      return cartItems; // this line sets state??? where this line setting state??
+    });
+  }
+
   render() {
-    console.log('render collectionpage');
-    console.log(this.state);
-    if(this.state.searchFormSubmitted) {
+    console.log(this.props);
+    if(this.props.searchFormSubmitted) {
       return <Redirect to={{pathname: '/search',
-                            search: `?categoryID=${this.state.category}&keyword=${this.state.keyword}`}} />
+                            search: `?categoryID=${this.props.category}&keyword=${this.props.keyword}`}} />
     }
 
     return (
       <div className="">
-        <Header categories={this.state.categories}
-                onChange={this.onChange}
-                onSubmitSearch={this.onSubmitSearch} />
+        {/* <Header categories={this.state.categories} onChange={this.onChange}
+                onSubmitSearch={this.onSubmitSearch} /> */}
         <SubNavBar categories={this.state.categories} onCategoryClick={this.onCategoryClick} />
         <div style={{marginLeft:"10%", display:"flex"}}>
           <SideFilter categoryName={this.state.categoryName}  selectedRadioBtn={this.state.selectedRadioBtn}
-                      onChange={this.onChange} showCategoryName={true}/>
-          <CollectionSection products={this.state.products}/>
+                      onChange={this.onChange} showCategoryName={true} />
+          <CollectionSection products={this.state.products}
+            handleAddToCart={this.handleAddToCart} />
         </div>
 
       </div>
